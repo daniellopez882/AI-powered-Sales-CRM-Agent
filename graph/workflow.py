@@ -6,6 +6,7 @@ from agents.email_personalizer import EmailPersonalizerAgent
 from agents.follow_up_scheduler import FollowUpScheduler
 from agents.deal_analyzer import DealAnalyzerAgent
 from agents.pipeline_reporter import PipelineReporter
+from agents.competitor_intel import CompetitorIntelAgent
 
 def create_sales_graph():
     # Initialize agents
@@ -15,6 +16,7 @@ def create_sales_graph():
     follow_up_scheduler = FollowUpScheduler()
     deal_analyzer = DealAnalyzerAgent()
     pipeline_reporter = PipelineReporter()
+    competitor_intel = CompetitorIntelAgent()
 
     # Define the graph
     workflow = StateGraph(CRMAgentState)
@@ -33,6 +35,9 @@ def create_sales_graph():
     workflow.add_node("deal_analyzer", lambda state: {"deal_analysis": deal_analyzer.run(state.get("deal_data", [])), "next_agent": "pipeline_reporter"})
     workflow.add_node("pipeline_reporter", lambda state: pipeline_reporter.process(state.get("deal_analysis", {})))
 
+    # Intel Branch
+    workflow.add_node("competitor_intel", lambda state: {"competitor_battle_card": competitor_intel.run(state), "next_agent": None})
+
     # Set entry point
     workflow.set_entry_point("orchestrator")
 
@@ -41,7 +46,7 @@ def create_sales_graph():
         if state.get("requires_human"):
             return END
         next_agent = state.get("next_agent")
-        if next_agent in ["lead_enricher", "email_personalizer", "deal_analyzer"]:
+        if next_agent in ["lead_enricher", "email_personalizer", "deal_analyzer", "competitor_intel"]:
             return next_agent
         return END
 
@@ -52,6 +57,7 @@ def create_sales_graph():
             "lead_enricher": "lead_enricher",
             "email_personalizer": "email_personalizer",
             "deal_analyzer": "deal_analyzer",
+            "competitor_intel": "competitor_intel",
             END: END
         }
     )

@@ -31,6 +31,7 @@ SalesIQ orchestrates six elite AI agents, each a master of their domain:
 | **FollowUpScheduler** | Behavioral | Psychology-driven sequence triggers. |
 | **DealAnalyzer** | Data Science | Win/Loss pattern recognition & risk flagging. |
 | **PipelineReporter** | Executive | 90-second scannable summaries for leadership. |
+| **CompetitorIntel** | Intel | Competitive battle cards & objection handling. |
 
 ---
 
