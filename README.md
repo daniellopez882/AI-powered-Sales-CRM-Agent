@@ -1,111 +1,88 @@
-# 🤖 SalesIQ: AI-Powered Sales CRM Agent
+# 🤖 SalesIQ: The Autonomous Revenue Engine
+### *The elite sales operations layer for B2B companies.*
 
-**SalesIQ** is a high-performance revenue engine built with LangGraph, CrewAI, and MCP. It automates the entire B2B sales lifecycle—from lead intelligence gathering and hyper-personalized outreach to behavioral follow-ups and deep pipeline analysis.
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+[![LangGraph](https://img.shields.io/badge/Orchestration-LangGraph-orange)](https://github.com/langchain-ai/langgraph)
+[![CrewAI](https://img.shields.io/badge/Agents-CrewAI-red)](https://crewai.com)
+[![MCP](https://img.shields.io/badge/Protocol-MCP-green)](https://modelcontextprotocol.io)
 
----
-
-## 🚀 Key Features
-
-- **LeadEnricher**: Autonomous B2B intelligence gathering (LinkedIn, Apollo, Clearbit).
-- **EmailPersonalizer**: Generates irresistible cold outreach using proven sales psychology.
-- **FollowUpScheduler**: Behavioral triggers for smart, non-pushy follow-up sequences.
-- **DealAnalyzer**: Revenue science to extract win/loss patterns and predictive deal scoring.
-- **PipelineReporter**: Scannable executive summaries delivered to Slack/Email.
-- **MCP Native**: Extensible tool system via the Model Context Protocol.
+**SalesIQ** isn't just a CRM tool—it's a specialized revenue engine. Built on the **Model Context Protocol (MCP)** and powered by **LangGraph + CrewAI**, it automates the high-friction parts of the sales lifecycle, turning raw data into high-velocity pipeline.
 
 ---
 
-## 🛠️ Technology Stack
+## ✨ Why SalesIQ?
+In the modern B2B landscape, speed and personalization are the only moats. SalesIQ provides a full autonomous crew that works 24/7 to:
 
-| Component | Technology |
-| :--- | :--- |
-| **Agent Orchestration** | LangGraph + CrewAI |
-| **LLM Framework** | LangChain |
-| **Tools & APIs** | Model Context Protocol (MCP) |
-| **API Backend** | FastAPI + Uvicorn |
-| **Integrations** | Apollo, HubSpot, Gmail, Slack |
-| **Data Flow** | Typed State Management |
+*   **Eliminate Manual Research**: Complete lead profiles in seconds, not hours.
+*   **Hyper-Personalize at Scale**: Emails that feel human because they *think* like experts.
+*   **Predict Revenue with Science**: Move from "gut feeling" to data-driven win probabilities.
+*   **Automate the "Follow-Up" Trap**: Behavioral sequences that build trust, not spam folders.
 
 ---
 
-## 📂 Project Structure
+## 🧠 The Agentic Crew
+SalesIQ orchestrates six elite AI agents, each a master of their domain:
 
+| Agent | Mission | Specialization |
+| :--- | :--- | :--- |
+| **Orchestrator** | Supervisor | Task classification & recursive delegation. |
+| **LeadEnricher** | Intelligence | Deep B2B data scraping & ICP scoring (1-10). |
+| **EmailPersonalizer** | Copywriting | Proven hook-bridge-value-CTA frameworks. |
+| **FollowUpScheduler** | Behavioral | Psychology-driven sequence triggers. |
+| **DealAnalyzer** | Data Science | Win/Loss pattern recognition & risk flagging. |
+| **PipelineReporter** | Executive | 90-second scannable summaries for leadership. |
+
+---
+
+## �️ The Technology Core
+Built for performance and technical extensibility:
+
+- **Stateful Orchestration**: LangGraph manages complex, circular sales workflows with total consistency.
+- **MCP Integration**: Seamlessly connect to HubSpot, Apollo, LinkedIn, and Gmail via standardized tools.
+- **Revenue Science**: Predictive algorithms calculate win probability and "Time-to-Close" based on historical CRM patterns.
+- **Enterprise Guardrails**: GDPR/CAN-SPAM compliance baked into every agent's DNA.
+
+---
+
+## 📂 System Architecture
 ```text
 sales-crm-agent/
-├── agents/
-│   ├── orchestrator.py      # LangGraph supervisor node
-│   ├── lead_enricher.py     # CrewAI B2B specialist
-│   ├── email_personalizer.py# Elite copywriter agent
-│   ├── follow_up_scheduler.py# Psychology expert agent
-│   ├── deal_analyzer.py     # Revenue scientist agent
-│   └── pipeline_reporter.py # Executive communicator agent
-├── mcp/
-│   ├── server.py            # FastMCP server with sales tools
-├── graph/
-│   ├── state.py             # TypedDict CRMAgentState
-│   └── workflow.py          # StateGraph construction
-├── integrations/
-│   └── mocks.py             # External API mock handlers
-├── api/
-│   └── main.py              # FastAPI endpoints
-├── requirements.txt         # Project dependencies
-└── README.md
+├── agents/            # Specialized autonomous agents
+├── mcp/               # Model Context Protocol server logic
+├── graph/             # Stateful LangGraph workflow definitions
+├── integrations/      # Sales tool connectors (HubSpot, Gmail, etc.)
+├── api/               # FastAPI high-performance interface
+└── dashboard/         # Real-time revenue monitoring
 ```
 
 ---
 
-## 🚦 Getting Started
-
-### 1. Prerequisites
-- Python 3.10+
-- OpenAI API Key
-
-### 2. Installation
+## � Deployment
+### 1. Ready the Engine
 ```bash
-# Clone the repository
-git clone https://github.com/your-repo/sales-crm-agent.git
-cd sales-crm-agent
-
-# Install dependencies
+git clone https://github.com/daniellopez882/AI-powered-Sales-CRM-Agent.git
+cd AI-powered-Sales-CRM-Agent
 pip install -r requirements.txt
 ```
 
-### 3. Configuration
-Copy `.env.example` to `.env` and fill in your keys:
+### 2. Ignite the Agents
 ```bash
-cp .env.example .env
-```
-
-### 4. Running the Agent
-Start the FastAPI server:
-```bash
+# Start the revenue API
 python -m api.main
-```
 
-Start the MCP server (for Claude/LangChain consumption):
-```bash
+# Launch the MCP server
 python -m mcp.server
 ```
 
 ---
 
-## 🧠 Core Agent Logic: The Orchestrator
-
-The `SalesOrchestrator` uses a specialized Decision Framework to classify tasks and delegate to the correct specialist. Every output includes:
-- `task_type`: Classification
-- `confidence`: AI certainty score (0.0 - 1.0)
-- `next_agent`: Recommended next step in the flow
-- `requires_human`: Flag for critical deals or ambiguous data
-
----
-
-## 🛡️ Guardrails & Safety
-
-- **Data Privacy**: Masking of PII in logs.
-- **Compliance**: Built-in GDPR and CAN-SPAM logic.
-- **Human-in-the-Loop**: Automatic escalation for deals > $50,000 or C-Suite contacts.
-- **Rate Limiting**: Intelligent API throttling for HubSpot and Gmail.
+## 🛡️ Guardrails & Ethics
+We believe in **Human-in-the-Loop** AI. SalesIQ automatically escalates to a human operator when:
+- Deal value exceeds **$50,000**.
+- The contact is a **C-Suite executive** at a Fortune 500.
+- Data confidence falls below **70%**.
+- Legal or compliance keywords are detected in replies.
 
 ---
 
-*Built by [Antigravity](https://github.com/antigravity) for elite Sales Operations.*
+*Engineered by [Antigravity](https://github.com/antigravity) for the next generation of sales leaders.*
