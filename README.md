@@ -264,7 +264,7 @@ SalesIQ is built enterprise-first. Safety and compliance are not afterthoughts �
 
 **Built for the 1% of sales operators who refuse to lose deals to process.**
 
-*Engineered by [Ismail Sajid](https://github.com/daniellopez882) — Agentic AI Engineer*
+*Engineered by [Daniel Lopez](https://github.com/daniellopez882) — Agentic AI Engineer*
 
 ⭐ Star this repo if SalesIQ is the system you wish existed sooner.
 
