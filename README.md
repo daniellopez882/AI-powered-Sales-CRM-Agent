@@ -85,4 +85,4 @@ We believe in **Human-in-the-Loop** AI. SalesIQ automatically escalates to a hum
 
 ---
 
-*Engineered by [Antigravity](https://github.com/antigravity) for the next generation of sales leaders.*
+*Engineered by [Daniel Lopez](https://github.com/daniellopez882/) for the next generation of sales leaders.*
