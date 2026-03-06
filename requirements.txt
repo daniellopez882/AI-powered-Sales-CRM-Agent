@@ -1,14 +1,39 @@
-langchain
-langgraph
-crewai
-fastapi
-uvicorn
-python-dotenv
-pydantic
-mcp
-httpx
-pydantic-settings
-google-search-results
-langchain-openai
-langchain-community
-langchain-anthropic
+# ── LLM Providers ──────────────────────────────────────────────────────────────
+langchain-openai>=0.1.0
+langchain-anthropic>=0.1.0
+langchain-core>=0.2.0
+langchain>=0.2.0
+
+# ── Agent Frameworks ───────────────────────────────────────────────────────────
+langgraph>=0.1.0
+crewai>=0.28.0
+
+# ── Model Context Protocol ─────────────────────────────────────────────────────
+mcp>=1.0.0
+
+# ── API & Web ──────────────────────────────────────────────────────────────────
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9
+
+# ── HTTP Client (for real integrations) ───────────────────────────────────────
+httpx>=0.27.0
+
+# ── Configuration & Validation ────────────────────────────────────────────────
+pydantic>=2.7.0
+pydantic-settings>=2.2.0
+
+# ── Environment Variables ─────────────────────────────────────────────────────
+python-dotenv>=1.0.0
+
+# ── Structured Logging ────────────────────────────────────────────────────────
+structlog>=24.0.0
+
+# ── Observability (Optional — enable in production) ───────────────────────────
+# sentry-sdk[fastapi]>=2.0.0    # Enable for error tracking
+# langsmith>=0.1.0              # Enable for LLM tracing (set LANGCHAIN_TRACING_V2=true)
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
+httpx>=0.27.0                   # Also used for TestClient in tests
