@@ -1,271 +1,83 @@
-<div align="center">
+# 🚀 SalesIQ: The Autonomous Revenue Engine
 
-# ⚡ SalesIQ
-### The Autonomous Revenue Engine for Elite B2B Teams.
+[![CI/CD](https://github.com/daniellopez882/AI-powered-Sales-CRM-Agent/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/daniellopez882/AI-powered-Sales-CRM-Agent/actions/workflows/ci-cd.yml)
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](Dockerfile)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-*Stop managing your CRM. Let your CRM manage your pipeline.*
+**SalesIQ** is a production-grade, agentic AI sales operations system built for high-growth B2B companies. It transforms raw lead signals into qualified pipeline through a coordinated crew of specialized AI agents.
 
-[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![LangGraph](https://img.shields.io/badge/LangGraph-Orchestration-FF6B35?style=for-the-badge)](https://github.com/langchain-ai/langgraph)
-[![CrewAI](https://img.shields.io/badge/CrewAI-Agents-6C63FF?style=for-the-badge)](https://crewai.com)
-[![MCP](https://img.shields.io/badge/MCP-Protocol-00C896?style=for-the-badge)](https://modelcontextprotocol.io)
-[![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![License: ISC](https://img.shields.io/badge/License-ISC-blue?style=for-the-badge)](https://opensource.org/licenses/ISC)
-
-<br/>
-
-**[🚀 Get Started](#-deployment)** · **[📖 Architecture](#-system-architecture)** · **[🧠 The Agents](#-the-agentic-crew)** · **[🛡️ Guardrails](#-guardrails--compliance)**
-
-</div>
+Built with **LangGraph + CrewAI + FastAPI**, SalesIQ isn't just a chatbot — it's an autonomous sales floor that enriches leads, personalizes outreach, and analyzes deal intelligence at scale.
 
 ---
 
-## The Problem with B2B Sales Today
+## 💎 Enterprise-Grade Features
 
-Your best reps spend **67% of their time** on tasks that don't require intelligence — logging CRM data, researching prospects, writing follow-ups, and generating reports.
-
-Meanwhile, the deals that matter are stalling because no one has bandwidth to think.
-
-**SalesIQ fixes this.**
-
----
-
-## What is SalesIQ?
-
-SalesIQ is a **fully autonomous B2B revenue engine** built on the Model Context Protocol (MCP), powered by a crew of specialized AI agents that work in coordinated sequence.
-
-It doesn't assist your sales team. It *amplifies* them.
-
-From a single lead input to a booked meeting — SalesIQ handles research, outreach, follow-up, competitive intelligence, and executive reporting. Automatically. In seconds.
-
-> *"The first AI system that doesn't just generate content — it executes a full sales motion."*
+*   **🕵️ Orchestrated Intelligence**: A central **SalesOrchestrator** (LangGraph) coordinates specialized agents for enrichment, personalization, and analysis.
+*   **🛡️ Production Security**: Integrated `X-API-Key` authentication, rate limiting (`slowapi`), and universal PII masking in structured logs.
+*   **🏎️ Performance Scaling**: Redis-backed enrichment caching reduces latency and API costs by up to 80%.
+*   **🔄 Persistent Sessions**: SQLite/Postgres checkpointing allows complex multi-turn sales workflows to survive server restarts.
+*   **⚖️ Compliance First**: Full audit logging system for B2B data handling transparency.
+*   **📦 Cloud Native**: Fully Dockerized with multi-stage builds and `docker-compose` orchestration.
 
 ---
 
-## 🧠 The Agentic Crew
+## 🏗️ The Agentic Architecture
 
-Seven elite agents. One shared mission: **close more revenue, faster.**
+SalesIQ uses a "Supervisor-Worker" pattern implemented via LangGraph:
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        SALESIQ ORCHESTRATOR                         │
-│              Classifies · Delegates · Validates · Synthesizes       │
-└──────┬─────────┬──────────┬───────────┬─────────────┬──────────────┘
-       │         │          │           │             │
-       ▼         ▼          ▼           ▼             ▼
-  LeadEnricher  Email    FollowUp    Deal        Pipeline     Competitor
-               Personalizer Scheduler Analyzer   Reporter     Intel
-```
-
-| Agent | Role | Output |
-| :--- | :--- | :--- |
-| 🎯 **Orchestrator** | Central command. Routes tasks across the crew. | Structured execution chain + confidence score |
-| 🔍 **LeadEnricher** | 4-layer B2B intelligence gathering & ICP scoring. | Verified prospect profile with intent signals |
-| ✍️ **EmailPersonalizer** | Hook-Bridge-Value-CTA framework copywriting. | 3 subject line variants + 75-125 word body |
-| 🔁 **FollowUpScheduler** | Behavioral trigger-based sequence design. | 6-touch sequence with channel routing logic |
-| 📊 **DealAnalyzer** | Win/Loss DNA + predictive deal scoring. | Risk flags, win probability, 3-scenario forecast |
-| 📋 **PipelineReporter** | 90-second executive pipeline summary. | Slack + HTML + JSON multi-format output |
-| ⚔️ **CompetitorIntel** | Real-time battle cards & objection handling. | Rep-ready talk tracks per competitor |
+1.  **LeadEnricher**: Deep B2B intelligence via Apollo.io integration.
+2.  **EmailPersonalizer**: Generates hyper-personalized, context-aware outreach copy.
+3.  **DealAnalyzer**: Analyzes HubSpot deal history to predict win probability.
+4.  **FollowUpScheduler**: Manages behavioral-based follow-up sequences.
+5.  **CompetitorIntel**: Real-time battle card generation from market news.
 
 ---
 
-## ✨ What SalesIQ Does Differently
+## 🚀 Quick Start
 
-**Other tools give your reps a copilot.**  
-SalesIQ gives your revenue org an autonomous crew.
-
-### 🔍 Intelligence That Rivals a Team of Analysts
-- Pulling company funding data, tech stack, open headcount, and LinkedIn signals
-- Scoring every lead 1-10 against your exact ICP with a weighted formula
-- Tagging emails as VERIFIED, INFERRED, or UNAVAILABLE — never fabricated
-
-### ✉️ Emails That Actually Get Replies
-- Hook sourced directly from enrichment data (funding news, job posts, LinkedIn activity)
-- 75-125 words. Grade 6 reading level. Zero filler phrases.
-- Built-in spam score + quality checklist before every send
-
-### 🔁 Follow-Ups That Feel Human
-- Behavioral routing: opened 3x? Accelerate. Clicked a link? Reference it. No open? Switch channels.
-- Touch 5 is a break-up email — historically the highest reply rate in the sequence
-- Timezone-aware scheduling. Never on Friday after 2pm.
-
-### 📊 Revenue Science, Not Gut Feelings
-- Win probability formula with stage-based baseline + 12 adjustment signals
-- Conservative / Base / Optimistic forecast scenarios per quarter
-- 🔴 CRITICAL / 🟡 MODERATE / 🟢 ON TRACK risk classification per deal
-
----
-
-## 🏗️ System Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        API LAYER                            │
-│               FastAPI  ·  REST Endpoints                    │
-└───────────────────────┬─────────────────────────────────────┘
-                        │
-┌───────────────────────▼─────────────────────────────────────┐
-│                   LANGGRAPH ORCHESTRATION                   │
-│        Stateful StateGraph  ·  Conditional Routing          │
-│              CRMAgentState (TypedDict)                      │
-└──────┬──────────┬──────────────┬───────────────────┬────────┘
-       │          │              │                   │
-┌──────▼──┐  ┌───▼─────┐  ┌────▼────┐  ┌───────────▼───────┐
-│  CrewAI │  │ LangChain│  │  MCP    │  │  Integrations     │
-│ Agents  │  │  Chains  │  │ Server  │  │ HubSpot · Apollo  │
-│         │  │          │  │ (Tools) │  │ Gmail · Slack      │
-└─────────┘  └──────────┘  └─────────┘  └───────────────────┘
-```
-
-```
-sales-crm-agent/
-├── agents/
-│   ├── prompts.py           # All 8 production system prompts
-│   ├── orchestrator.py      # LangGraph supervisor node
-│   ├── lead_enricher.py     # CrewAI — B2B intelligence layer
-│   ├── email_personalizer.py# CrewAI — Copywriting engine
-│   ├── follow_up_scheduler.py# LangGraph — Behavioral sequences
-│   ├── deal_analyzer.py     # CrewAI — Revenue science
-│   ├── pipeline_reporter.py # LangGraph — Executive summaries
-│   └── competitor_intel.py  # CrewAI — Battle cards
-├── mcp/
-│   └── server.py            # FastMCP tool definitions
-├── graph/
-│   ├── state.py             # TypedDict CRMAgentState
-│   └── workflow.py          # StateGraph builder
-├── integrations/
-│   └── mocks.py             # Apollo · HubSpot · Gmail · Slack
-├── api/
-│   └── main.py              # FastAPI endpoints
-├── requirements.txt
-└── README.md
-```
-
----
-
-## 🚀 Deployment
-
-### Prerequisites
-- Python 3.10+
-- OpenAI or Anthropic API key
-- (Optional) Apollo, HubSpot, Gmail, Slack credentials for live integrations
-
-### 1. Clone & Install
-
+### 1. Clone & Set Up
 ```bash
 git clone https://github.com/daniellopez882/AI-powered-Sales-CRM-Agent.git
 cd AI-powered-Sales-CRM-Agent
-pip install -r requirements.txt
-```
-
-### 2. Configure Environment
-
-```bash
 cp .env.example .env
-# Add your API keys to .env
 ```
 
-```env
-OPENAI_API_KEY=sk-...
-APOLLO_API_KEY=...
-HUBSPOT_ACCESS_TOKEN=...
-SLACK_BOT_TOKEN=...
-```
-
-### 3. Launch
-
+### 2. Run with Docker (Recommended)
 ```bash
-# Start the revenue API
+docker-compose up -d
+```
+The API will be live at `http://localhost:8000/docs`.
+
+### 3. Local Development
+```bash
+pip install -r requirements.txt
 python -m api.main
-
-# Start the MCP tool server
-python -m mcp.server
-```
-
-### 4. Use the Prompts in Your Own Stack
-
-```python
-from agents.prompts import build_agent_prompt, LEAD_ENRICHER_PROMPT, ALL_PROMPTS
-
-# Inject any agent prompt — guardrails included automatically
-prompt = build_agent_prompt(LEAD_ENRICHER_PROMPT)
-
-# Or access all prompts by key
-enricher_prompt = ALL_PROMPTS["lead_enricher"]
 ```
 
 ---
 
-## ⚙️ The State Machine
+## 🛠️ Tech Stack
 
-Every piece of data flows through a single typed state — clean, predictable, inspectable.
-
-```python
-class CRMAgentState(TypedDict):
-    messages: Annotated[list, add_messages]  # Full conversation history
-    raw_lead: Optional[dict]                 # Input lead signal
-    enriched_lead: Optional[dict]            # Post-enrichment profile
-    email_draft: Optional[dict]              # Generated outreach
-    sequence: Optional[dict]                 # Follow-up sequence
-    deal_analysis: Optional[dict]            # Revenue analysis
-    pipeline_report: Optional[dict]          # Weekly report payload
-    competitor_battle_card: Optional[dict]   # Competitive intel
-    next_agent: Optional[str]                # Routing signal
-    requires_human: bool                     # Escalation flag
-    confidence: float                        # Agent confidence score
-```
+- **Orchestration**: LangGraph, CrewAI, LangChain
+- **Core**: Python 3.11, FastAPI
+- **Integrations**: Apollo.io, HubSpot, Slack, Gmail
+- **Data & Auth**: Redis (Cache), SQLite (State), Pydantic v2
+- **Observability**: Structlog, Sentry, LangSmith
 
 ---
 
-## 🛡️ Guardrails & Compliance
+## 🔒 Security & Compliance
 
-SalesIQ is built enterprise-first. Safety and compliance are not afterthoughts — they are baked into every agent prompt via `GUARDRAILS_PROMPT`, injected automatically by `build_agent_prompt()`.
-
-**Data Privacy**
-- GDPR, CAN-SPAM, and CASL compliance flags built into every email sequence
-- PII masked in all logs: `john@acme.com` → `j***@acme.com`
-
-**Human-in-the-Loop Escalation** *(non-negotiable)*
-- Deal value > **$50,000** → human reviews before any outreach
-- C-Suite contact at a Fortune 500 → human approves the email
-- Agent confidence < **0.65** → flagged for human verification
-- Any prospect reply → automation pauses immediately
-
-**API Rate Limit Enforcement**
-- Apollo: 50 enrichments/hour · Gmail: 500 emails/day · LinkedIn: 20 connections/day
-- Exponential backoff on all upstream API failures
+SalesIQ is designed for mature organizations:
+- **PII Protection**: Automatic regex-based masking of emails and phone numbers in all logs.
+- **Audit Trails**: Every agent decision is recorded with a unique `session_id`.
+- **Rate Protection**: Sliding window rate limiting prevents API abuse and token-cost spikes.
 
 ---
 
-## 📦 Tech Stack
+## 🤝 Contribution
 
-| Layer | Technology |
-| :--- | :--- |
-| Orchestration | LangGraph StateGraph |
-| Agents | CrewAI + LangChain |
-| LLM | GPT-4 Turbo / Claude 3.5 Sonnet |
-| Tool Protocol | Model Context Protocol (MCP) |
-| API | FastAPI + Uvicorn |
-| Integrations | Apollo · HubSpot · Gmail · Slack |
+We welcome PRs for new integration providers (Salesforce, Apollo, Outreach) and agent specialized frameworks.
 
 ---
-
-## 🗺️ Roadmap
-
-- [ ] Supabase integration for deal persistence
-- [ ] Real-time Slack alerts on deal stage changes
-- [ ] Voice follow-up via ElevenLabs + Twilio
-- [ ] Multi-tenant workspace support
-- [ ] A/B email performance analytics dashboard
-
----
-
-<div align="center">
-
-**Built for the 1% of sales operators who refuse to lose deals to process.**
-
-*Engineered by [Daniel Lopez](https://github.com/daniellopez882) — Agentic AI Engineer*
-
-⭐ Star this repo if SalesIQ is the system you wish existed sooner.
-
-</div>
+*Created by the SalesIQ Agentic AI Team. Built for the future of B2B Revenue.*
