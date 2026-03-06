@@ -16,13 +16,14 @@ from graph.workflow import create_sales_graph
 from graph.state import get_initial_state
 from config.settings import settings
 from langchain_core.messages import HumanMessage
+from utils.logging_config import logger
 
-# ── Logging ────────────────────────────────────────────────────────────────
-logging.basicConfig(
-    level=getattr(logging, settings.log_level.upper(), logging.INFO),
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-)
-logger = logging.getLogger(__name__)
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+# ── Rate Limiting ──────────────────────────────────────────────────────────
+limiter = Limiter(key_func=get_remote_address)
 
 # ── App Bootstrap ──────────────────────────────────────────────────────────
 app = FastAPI(
@@ -31,6 +32,9 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs" if not settings.is_production else None,
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -107,36 +111,37 @@ async def health():
 
 
 @app.post("/chat", response_model=SalesResponse, dependencies=[Depends(verify_api_key)])
-async def chat(request: SalesRequest):
+@limiter.limit(f"{settings.rate_limit_per_minute}/minute")
+async def chat(request: Request, body: SalesRequest):
     """
     Main SalesIQ agent endpoint.
     Accepts a user message + optional structured context.
     Routes through the LangGraph orchestration workflow.
     """
     session_id = str(uuid.uuid4())
-    logger.info(f"New request | session={session_id} | user={request.user_id}")
+    logger.info("new_request", session_id=session_id, user_id=body.user_id)
 
     state = get_initial_state(
         session_id=session_id,
-        product_description=request.product_description,
-        campaign_goal=request.campaign_goal,
-        tone_preference=request.tone_preference,
+        product_description=body.product_description,
+        campaign_goal=body.campaign_goal,
+        tone_preference=body.tone_preference,
     )
 
     # Populate state fields from request
-    state["messages"].append(HumanMessage(content=request.message))
-    if request.raw_lead:
-        state["raw_lead"] = request.raw_lead
-    if request.deal_data:
-        state["deal_data"] = request.deal_data
-    if request.competitor_name:
-        state["competitor_name"] = request.competitor_name
+    state["messages"].append(HumanMessage(content=body.message))
+    if body.raw_lead:
+        state["raw_lead"] = body.raw_lead
+    if body.deal_data:
+        state["deal_data"] = body.deal_data
+    if body.competitor_name:
+        state["competitor_name"] = body.competitor_name
 
     try:
         graph = get_graph()
         final_state = graph.invoke(state)
 
-        logger.info(f"Request complete | session={session_id} | task={final_state.get('task_type')}")
+        logger.info("request_complete", session_id=session_id, task_type=final_state.get('task_type'))
 
         return SalesResponse(
             session_id=session_id,
@@ -156,7 +161,7 @@ async def chat(request: SalesRequest):
         )
 
     except Exception as e:
-        logger.error(f"Graph execution failed | session={session_id}: {e}", exc_info=True)
+        logger.error("graph_execution_failed", session_id=session_id, error=str(e), exc_info=True)
         raise HTTPException(status_code=500, detail=f"Agent pipeline failed: {str(e)}")
 
 

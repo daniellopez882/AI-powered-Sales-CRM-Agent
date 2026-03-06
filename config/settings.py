@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     langchain_project: str = Field("salesiq-crm", env="LANGCHAIN_PROJECT")
 
     # ── Rate Limits ───────────────────────────────────────
+    rate_limit_per_minute: int = Field(10, env="RATE_LIMIT_PER_MINUTE")
     apollo_max_enrichments_per_hour: int = 50
     gmail_max_emails_per_day: int = 500
     linkedin_max_connections_per_day: int = 20
