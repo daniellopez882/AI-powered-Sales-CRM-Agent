@@ -12,6 +12,7 @@ from graph.state import CRMAgentState
 from config.settings import settings
 import logging
 import json
+from integrations.cache import cache
 
 logger = logging.getLogger(__name__)
 
@@ -107,12 +108,16 @@ Return ONLY a valid JSON object matching the defined OUTPUT FORMAT.
         """
         logger.info(f"LeadEnricher starting for: {lead_data.get('email', lead_data.get('company', 'unknown'))}")
 
-        # Step 1: Get pre-enriched data from Apollo/mock
-        pre_enriched = None
-        if email := lead_data.get("email"):
+        # Step 1: Get pre-enriched data (Check cache first)
+        cache_key = f"enrichment:apollo:{lead_data.get('email', '')}"
+        pre_enriched = cache.get(cache_key) if lead_data.get("email") else None
+
+        if not pre_enriched and (email := lead_data.get("email")):
             try:
                 pre_enriched = self.lead_provider.enrich_contact(email)
-                logger.info("Apollo enrichment successful")
+                if pre_enriched:
+                    cache.set(cache_key, pre_enriched)
+                logger.info("Apollo enrichment successful (live)")
             except Exception as e:
                 logger.warning(f"Apollo enrichment failed, proceeding with LLM only: {e}")
 

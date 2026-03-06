@@ -21,6 +21,11 @@ class Settings(BaseSettings):
     slack_bot_token: Optional[str] = Field(None, env="SLACK_BOT_TOKEN")
     gmail_client_secret_file: Optional[str] = Field(None, env="GMAIL_CLIENT_SECRET_FILE")
 
+    # ── Infrastructure ────────────────────────────────────
+    redis_url: str = Field("redis://localhost:6379/0", env="REDIS_URL")
+    database_url: str = Field("sqlite:///c:/Users/Wajiz.pk/Desktop/AI-powered Sales CRM Agent/salesiq.db", env="DATABASE_URL")
+    cache_ttl_seconds: int = Field(604800, env="CACHE_TTL_SECONDS")  # 7 days default
+
     # ── Application ───────────────────────────────────────
     api_secret_key: str = Field("changeme-in-production", env="API_SECRET_KEY")
     use_mock_integrations: bool = Field(True, env="USE_MOCK_INTEGRATIONS")

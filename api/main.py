@@ -68,7 +68,8 @@ async def verify_api_key(api_key: Optional[str] = Depends(api_key_header)):
 # ── Request / Response Models ──────────────────────────────────────────────
 class SalesRequest(BaseModel):
     user_id: str = Field(..., min_length=1, max_length=128)
-    message: str = Field(..., min_length=1, max_length=4000)  # Prevent token bombs
+    session_id: Optional[str] = Field(None, description="Existing session ID to resume")
+    message: str = Field(..., min_length=1, max_length=4000)
     raw_lead: Optional[dict] = None
     deal_data: Optional[list] = None
     competitor_name: Optional[str] = Field(None, max_length=128)
@@ -118,8 +119,8 @@ async def chat(request: Request, body: SalesRequest):
     Accepts a user message + optional structured context.
     Routes through the LangGraph orchestration workflow.
     """
-    session_id = str(uuid.uuid4())
-    logger.info("new_request", session_id=session_id, user_id=body.user_id)
+    session_id = body.session_id or str(uuid.uuid4())
+    logger.info("new_request", session_id=session_id, user_id=body.user_id, is_resume=bool(body.session_id))
 
     state = get_initial_state(
         session_id=session_id,
@@ -128,18 +129,16 @@ async def chat(request: Request, body: SalesRequest):
         tone_preference=body.tone_preference,
     )
 
-    # Populate state fields from request
     state["messages"].append(HumanMessage(content=body.message))
-    if body.raw_lead:
-        state["raw_lead"] = body.raw_lead
-    if body.deal_data:
-        state["deal_data"] = body.deal_data
-    if body.competitor_name:
-        state["competitor_name"] = body.competitor_name
+    if body.raw_lead: state["raw_lead"] = body.raw_lead
+    if body.deal_data: state["deal_data"] = body.deal_data
+    if body.competitor_name: state["competitor_name"] = body.competitor_name
 
     try:
         graph = get_graph()
-        final_state = graph.invoke(state)
+        # ── Async Invocation with Persistence ──────────────────
+        config = {"configurable": {"thread_id": session_id}}
+        final_state = await graph.ainvoke(state, config=config)
 
         logger.info("request_complete", session_id=session_id, task_type=final_state.get('task_type'))
 
