@@ -1,0 +1,14 @@
+langchain
+langgraph
+crewai
+fastapi
+uvicorn
+python-dotenv
+pydantic
+mcp
+httpx
+pydantic-settings
+google-search-results
+langchain-openai
+langchain-community
+langchain-anthropic

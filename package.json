@@ -1,0 +1,16 @@
+{
+  "name": "ai-powered-sales-crm-agent",
+  "version": "1.0.0",
+  "description": "**SalesIQ** is a specialized revenue engine built on the Model Context Protocol (MCP), designed for senior sales operations managers to automate B2B pipeline management, lead intelligence, and outreach personalization.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "vite": "^7.3.1"
+  }
+}
