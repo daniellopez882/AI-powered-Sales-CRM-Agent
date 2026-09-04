@@ -3,11 +3,11 @@ integrations/hubspot.py
 Real HubSpot CRM API client.
 Docs: https://developers.hubspot.com/docs/api/crm/deals
 """
-import httpx
-from typing import Optional
-from integrations.base import BaseCRMProvider
-from config.settings import settings
 
+import httpx
+
+from config.settings import settings
+from integrations.base import BaseCRMProvider
 
 HUBSPOT_BASE_URL = "https://api.hubapi.com"
 
@@ -32,10 +32,17 @@ class HubSpotIntegration(BaseCRMProvider):
         self._check_token()
 
         properties = [
-            "dealname", "amount", "dealstage", "closedate",
-            "hs_deal_stage_probability", "pipeline", "industry",
-            "notes_last_updated", "hs_lastmodifieddate",
-            "num_associated_contacts", "closed_lost_reason"
+            "dealname",
+            "amount",
+            "dealstage",
+            "closedate",
+            "hs_deal_stage_probability",
+            "pipeline",
+            "industry",
+            "notes_last_updated",
+            "hs_lastmodifieddate",
+            "num_associated_contacts",
+            "closed_lost_reason",
         ]
 
         with httpx.Client(timeout=30.0) as client:
@@ -46,7 +53,7 @@ class HubSpotIntegration(BaseCRMProvider):
                     "limit": 100,
                     "properties": ",".join(properties),
                     "archived": False,
-                }
+                },
             )
             response.raise_for_status()
             data = response.json()
@@ -54,19 +61,21 @@ class HubSpotIntegration(BaseCRMProvider):
         deals = []
         for item in data.get("results", []):
             props = item.get("properties", {})
-            deals.append({
-                "id": item.get("id"),
-                "name": props.get("dealname", ""),
-                "value": float(props.get("amount") or 0),
-                "stage": props.get("dealstage", ""),
-                "close_date": props.get("closedate", ""),
-                "win_probability": float(props.get("hs_deal_stage_probability") or 0),
-                "last_activity": props.get("hs_lastmodifieddate", ""),
-                "industry": props.get("industry", ""),
-                "loss_reason": props.get("closed_lost_reason", ""),
-                "contact_count": int(props.get("num_associated_contacts") or 0),
-                "source": "hubspot",
-            })
+            deals.append(
+                {
+                    "id": item.get("id"),
+                    "name": props.get("dealname", ""),
+                    "value": float(props.get("amount") or 0),
+                    "stage": props.get("dealstage", ""),
+                    "close_date": props.get("closedate", ""),
+                    "win_probability": float(props.get("hs_deal_stage_probability") or 0),
+                    "last_activity": props.get("hs_lastmodifieddate", ""),
+                    "industry": props.get("industry", ""),
+                    "loss_reason": props.get("closed_lost_reason", ""),
+                    "contact_count": int(props.get("num_associated_contacts") or 0),
+                    "source": "hubspot",
+                }
+            )
 
         return deals
 
@@ -78,7 +87,7 @@ class HubSpotIntegration(BaseCRMProvider):
             response = client.post(
                 f"{HUBSPOT_BASE_URL}/crm/v3/objects/deals",
                 headers=self.headers,
-                json={"properties": deal_data}
+                json={"properties": deal_data},
             )
             response.raise_for_status()
             return response.json()
@@ -91,7 +100,7 @@ class HubSpotIntegration(BaseCRMProvider):
             response = client.patch(
                 f"{HUBSPOT_BASE_URL}/crm/v3/objects/deals/{deal_id}",
                 headers=self.headers,
-                json={"properties": updates}
+                json={"properties": updates},
             )
             response.raise_for_status()
             return response.json()
@@ -109,11 +118,15 @@ class HubSpotIntegration(BaseCRMProvider):
                         "hs_note_body": activity.get("body", ""),
                         "hs_timestamp": activity.get("timestamp", ""),
                     },
-                    "associations": [{
-                        "to": {"id": deal_id},
-                        "types": [{"associationCategory": "HUBSPOT_DEFINED", "associationTypeId": 214}]
-                    }]
-                }
+                    "associations": [
+                        {
+                            "to": {"id": deal_id},
+                            "types": [
+                                {"associationCategory": "HUBSPOT_DEFINED", "associationTypeId": 214}
+                            ],
+                        }
+                    ],
+                },
             )
             response.raise_for_status()
             return response.json()
