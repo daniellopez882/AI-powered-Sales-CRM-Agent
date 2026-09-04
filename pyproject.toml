@@ -1,0 +1,59 @@
+[project]
+name = "salesiq"
+version = "1.0.0"
+description = "Autonomous B2B revenue engine built on LangGraph."
+requires-python = ">=3.11"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+exclude = [".venv", "venv", "frontend", "__pycache__", ".git"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # import sorting
+    "B",    # bugbear
+    "C4",   # comprehensions
+    "UP",   # pyupgrade
+    "S",    # bandit-style security checks
+    "T20",  # no stray print()
+    "TID",  # banned imports (enforces the logging contract, ADR-003)
+    "RUF",
+]
+ignore = [
+    "E501",   # line length is handled by the formatter
+    "B008",   # FastAPI's Depends() in defaults is the documented idiom
+    "RUF001", # box-drawing characters are used deliberately in section comments
+    "RUF003",
+]
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+# ADR-003: one logging contract. A stdlib logger called with structlog's
+# keyword style raises TypeError at INFO, which is how the cache bug shipped.
+"logging.getLogger".msg = "Use utils.logging_config.get_logger() instead (ADR-003)."
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106"]   # asserts and dummy credentials are expected
+"demo.py" = ["T201"]                      # a demo script is allowed to print
+"benchmarks/**" = ["T201"]                # a CLI benchmark reports to stdout
+"utils/logging_config.py" = ["TID251"]    # the one module that may configure stdlib logging
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+no_implicit_optional = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers --tb=short"
+markers = [
+    "integration: exercises a real external dependency (Redis, network)",
+    "security: asserts a security property",
+]
