@@ -3,10 +3,11 @@ integrations/slack.py
 Real Slack Web API client for sending pipeline reports and alerts.
 Docs: https://api.slack.com/methods/chat.postMessage
 """
+
 import httpx
-from typing import Optional
-from integrations.base import BaseMessagingProvider
+
 from config.settings import settings
+from integrations.base import BaseMessagingProvider
 
 
 class SlackIntegration(BaseMessagingProvider):
@@ -18,8 +19,7 @@ class SlackIntegration(BaseMessagingProvider):
             "Content-Type": "application/json",
         }
 
-    def post_message(self, channel: str, text: str,
-                     blocks: Optional[list] = None) -> dict:
+    def post_message(self, channel: str, text: str, blocks: list | None = None) -> dict:
         """
         Post a message to a Slack channel.
         Args:
@@ -36,9 +36,7 @@ class SlackIntegration(BaseMessagingProvider):
 
         with httpx.Client(timeout=10.0) as client:
             response = client.post(
-                f"{self.base_url}/chat.postMessage",
-                headers=self.headers,
-                json=payload
+                f"{self.base_url}/chat.postMessage", headers=self.headers, json=payload
             )
             response.raise_for_status()
             data = response.json()
@@ -52,8 +50,9 @@ class SlackIntegration(BaseMessagingProvider):
             "ts": data.get("ts"),  # Message timestamp (used for threading)
         }
 
-    def post_alert(self, title: str, message: str, level: str = "info",
-                   channel: str = "sales-alerts") -> dict:
+    def post_alert(
+        self, title: str, message: str, level: str = "info", channel: str = "sales-alerts"
+    ) -> dict:
         """
         Post a formatted alert with emoji level indicator.
         level: 'info' | 'warning' | 'critical'
