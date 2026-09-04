@@ -1,0 +1,40 @@
+# Keep secrets, local state and build noise out of the image and out of the
+# build context (the previous Dockerfile did `COPY . .` with no ignore file,
+# so .env and .git were baked into the published image).
+.env
+.env.*
+!.env.example
+
+.git
+.gitignore
+.github
+
+.venv
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage*
+
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+node_modules/
+frontend/**/node_modules/
+
+*.md
+!README.md
+docs/
+tests/
+benchmarks/
+
+Dockerfile
+docker-compose*.yml
+# docker-entrypoint.sh must stay in the image
+Makefile
