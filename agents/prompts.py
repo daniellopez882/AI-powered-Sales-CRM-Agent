@@ -908,6 +908,7 @@ ERROR HANDLING:
   → On exception: fail gracefully, return structured error object
 """
 
+
 def build_agent_prompt(base_prompt: str, include_guardrails: bool = True) -> str:
     """
     Combine agent-specific prompt with universal guardrails.
@@ -916,13 +917,14 @@ def build_agent_prompt(base_prompt: str, include_guardrails: bool = True) -> str
         return base_prompt + "\n\n" + GUARDRAILS_PROMPT
     return base_prompt
 
+
 ALL_PROMPTS = {
-    "orchestrator":         ORCHESTRATOR_PROMPT,
-    "lead_enricher":        LEAD_ENRICHER_PROMPT,
-    "email_personalizer":   EMAIL_PERSONALIZER_PROMPT,
-    "follow_up_scheduler":  FOLLOW_UP_SCHEDULER_PROMPT,
-    "deal_analyzer":        DEAL_ANALYZER_PROMPT,
-    "pipeline_reporter":    PIPELINE_REPORTER_PROMPT,
-    "competitor_intel":     COMPETITOR_INTEL_PROMPT,
-    "guardrails":           GUARDRAILS_PROMPT,
+    "orchestrator": ORCHESTRATOR_PROMPT,
+    "lead_enricher": LEAD_ENRICHER_PROMPT,
+    "email_personalizer": EMAIL_PERSONALIZER_PROMPT,
+    "follow_up_scheduler": FOLLOW_UP_SCHEDULER_PROMPT,
+    "deal_analyzer": DEAL_ANALYZER_PROMPT,
+    "pipeline_reporter": PIPELINE_REPORTER_PROMPT,
+    "competitor_intel": COMPETITOR_INTEL_PROMPT,
+    "guardrails": GUARDRAILS_PROMPT,
 }

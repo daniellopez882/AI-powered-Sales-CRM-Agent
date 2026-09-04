@@ -4,21 +4,23 @@ LeadEnricher — B2B intelligence gathering agent.
 Uses the real (or mock) Apollo integration via the factory.
 The enrichment PROTOCOL lives in the Task description where CrewAI actually uses it.
 """
-from crewai import Agent, Task, Crew, Process
-from langchain_openai import ChatOpenAI
-from agents.prompts import LEAD_ENRICHER_PROMPT
-from integrations import get_lead_provider
-from graph.state import CRMAgentState
-from config.settings import settings
-import logging
-import json
-from integrations.cache import cache
 
-logger = logging.getLogger(__name__)
+import json
+
+from crewai import Agent, Crew, Process, Task
+from langchain_openai import ChatOpenAI
+
+from config.settings import settings
+from graph.state import CRMAgentState
+from integrations import get_lead_provider
+from integrations.cache import cache
+from utils.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class LeadEnricherAgent:
-    def __init__(self, model_name: str = None):
+    def __init__(self, model_name: str | None = None):
         model = model_name or settings.default_model
         self.llm = ChatOpenAI(
             model=model,
@@ -42,7 +44,7 @@ class LeadEnricherAgent:
             llm=self.llm,
         )
 
-    def get_task(self, lead_data: dict, pre_enriched: dict = None) -> Task:
+    def get_task(self, lead_data: dict, pre_enriched: dict | None = None) -> Task:
         """
         Build the CrewAI Task with the full enrichment protocol in the description.
         pre_enriched: Data already fetched from real API (Apollo) to include as context.
@@ -106,7 +108,9 @@ Return ONLY a valid JSON object matching the defined OUTPUT FORMAT.
         2. Pass both raw lead + API data to the LLM for deep enrichment.
         3. Return structured enrichment profile.
         """
-        logger.info(f"LeadEnricher starting for: {lead_data.get('email', lead_data.get('company', 'unknown'))}")
+        logger.info(
+            f"LeadEnricher starting for: {lead_data.get('email', lead_data.get('company', 'unknown'))}"
+        )
 
         # Step 1: Get pre-enriched data (Check cache first)
         cache_key = f"enrichment:apollo:{lead_data.get('email', '')}"
@@ -135,6 +139,7 @@ Return ONLY a valid JSON object matching the defined OUTPUT FORMAT.
 
 # ── LangGraph node function (testable, named, with error handling) ────────────
 
+
 def lead_enricher_node(state: CRMAgentState, agent: LeadEnricherAgent) -> dict:
     """
     Named LangGraph node for LeadEnricher. Replaces the anonymous lambda.
@@ -145,7 +150,7 @@ def lead_enricher_node(state: CRMAgentState, agent: LeadEnricherAgent) -> dict:
     if not raw_lead:
         logger.error("lead_enricher_node called with no raw_lead in state")
         return {
-            "errors": state.get("errors", []) + ["LeadEnricher: No raw_lead provided in state."],
+            "errors": [*state.get("errors", []), "LeadEnricher: No raw_lead provided in state."],
             "requires_human": True,
         }
 
@@ -158,6 +163,7 @@ def lead_enricher_node(state: CRMAgentState, agent: LeadEnricherAgent) -> dict:
             icp_data = result.get("icp_scoring", {})
         elif hasattr(result, "raw"):
             import json as _json
+
             try:
                 parsed = _json.loads(result.raw)
                 icp_data = parsed.get("icp_scoring", {})
@@ -170,12 +176,12 @@ def lead_enricher_node(state: CRMAgentState, agent: LeadEnricherAgent) -> dict:
             "icp_score": icp_data.get("total_score"),
             "priority": icp_data.get("priority"),
             "next_agent": "email_personalizer",
-            "data_sources": state.get("data_sources", []) + ["lead_enricher"],
+            "data_sources": [*state.get("data_sources", []), "lead_enricher"],
         }
 
     except Exception as e:
         logger.error(f"LeadEnricher node failed: {e}", exc_info=True)
         return {
-            "errors": state.get("errors", []) + [f"LeadEnricher failed: {str(e)}"],
+            "errors": [*state.get("errors", []), f"LeadEnricher failed: {e!s}"],
             "requires_human": True,
         }

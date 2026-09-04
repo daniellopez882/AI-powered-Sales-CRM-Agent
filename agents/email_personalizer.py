@@ -3,19 +3,21 @@ agents/email_personalizer.py
 EmailPersonalizer — writes hyper-personalized cold outreach emails.
 Receives enriched lead from LeadEnricher and generates subject lines + body.
 """
-from crewai import Agent, Task, Crew, Process
-from langchain_openai import ChatOpenAI
-from agents.prompts import EMAIL_PERSONALIZER_PROMPT
-from graph.state import CRMAgentState
-from config.settings import settings
-import logging
+
 import json
 
-logger = logging.getLogger(__name__)
+from crewai import Agent, Crew, Process, Task
+from langchain_openai import ChatOpenAI
+
+from config.settings import settings
+from graph.state import CRMAgentState
+from utils.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class EmailPersonalizerAgent:
-    def __init__(self, model_name: str = None):
+    def __init__(self, model_name: str | None = None):
         model = model_name or settings.default_model
         self.llm = ChatOpenAI(
             model=model,
@@ -108,6 +110,7 @@ Return ONLY a valid JSON object matching the defined OUTPUT FORMAT.
 
 # ── LangGraph node function ───────────────────────────────────────────────────
 
+
 def email_personalizer_node(state: CRMAgentState, agent: EmailPersonalizerAgent) -> dict:
     """Named LangGraph node for EmailPersonalizer with input validation + error handling."""
     enriched_lead = state.get("enriched_lead")
@@ -115,7 +118,10 @@ def email_personalizer_node(state: CRMAgentState, agent: EmailPersonalizerAgent)
     if not enriched_lead:
         logger.error("email_personalizer_node: no enriched_lead in state")
         return {
-            "errors": state.get("errors", []) + ["EmailPersonalizer: Missing enriched lead. Run LeadEnricher first."],
+            "errors": [
+                *state.get("errors", []),
+                "EmailPersonalizer: Missing enriched lead. Run LeadEnricher first.",
+            ],
             "requires_human": True,
         }
 
@@ -131,11 +137,11 @@ def email_personalizer_node(state: CRMAgentState, agent: EmailPersonalizerAgent)
         return {
             "email_draft": result,
             "next_agent": "follow_up_scheduler",
-            "data_sources": state.get("data_sources", []) + ["email_personalizer"],
+            "data_sources": [*state.get("data_sources", []), "email_personalizer"],
         }
     except Exception as e:
         logger.error(f"EmailPersonalizer node failed: {e}", exc_info=True)
         return {
-            "errors": state.get("errors", []) + [f"EmailPersonalizer failed: {str(e)}"],
+            "errors": [*state.get("errors", []), f"EmailPersonalizer failed: {e!s}"],
             "requires_human": True,
         }
