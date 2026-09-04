@@ -52,6 +52,11 @@ no_implicit_optional = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# The project is a plain directory tree, not an installed package. Without
+# this, `pytest` finds no top-level modules and every test errors on
+# ModuleNotFoundError; `python -m pytest` happened to work only because it
+# prepends the working directory to sys.path. CI runs plain `pytest`.
+pythonpath = ["."]
 addopts = "-q --strict-markers --tb=short"
 markers = [
     "integration: exercises a real external dependency (Redis, network)",
