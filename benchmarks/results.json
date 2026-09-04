@@ -1,0 +1,130 @@
+{
+  "environment": {
+    "python": "3.14.6",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "processor": "Intel64 Family 6 Model 158 Stepping 10, GenuineIntel",
+    "utc": "2026-09-03T10:55:08Z"
+  },
+  "suites": {
+    "cache": {
+      "payload_bytes": 175,
+      "set": {
+        "n": 2000,
+        "mean_ms": 0.6042,
+        "p50_ms": 0.5527,
+        "p95_ms": 0.9565,
+        "p99_ms": 1.3,
+        "min_ms": 0.4428,
+        "max_ms": 1.8347,
+        "ops_per_sec": 1655.0
+      },
+      "get_hit": {
+        "n": 2000,
+        "mean_ms": 0.6785,
+        "p50_ms": 0.583,
+        "p95_ms": 1.2021,
+        "p99_ms": 2.1361,
+        "min_ms": 0.4155,
+        "max_ms": 5.7574,
+        "ops_per_sec": 1473.9
+      },
+      "get_miss": {
+        "n": 2000,
+        "mean_ms": 0.4709,
+        "p50_ms": 0.4126,
+        "p95_ms": 0.7804,
+        "p99_ms": 1.4435,
+        "min_ms": 0.3427,
+        "max_ms": 6.2345,
+        "ops_per_sec": 2123.5
+      }
+    },
+    "pii": {
+      "short_string": {
+        "n": 20000,
+        "mean_ms": 0.0084,
+        "p50_ms": 0.0079,
+        "p95_ms": 0.0094,
+        "p99_ms": 0.0131,
+        "min_ms": 0.0076,
+        "max_ms": 0.2252,
+        "ops_per_sec": 119704.9
+      },
+      "long_string": {
+        "n": 10000,
+        "mean_ms": 0.0292,
+        "p50_ms": 0.0265,
+        "p95_ms": 0.0336,
+        "p99_ms": 0.0689,
+        "min_ms": 0.0258,
+        "max_ms": 0.9534,
+        "ops_per_sec": 34271.1
+      },
+      "nested_10_records": {
+        "n": 2000,
+        "mean_ms": 0.033,
+        "p50_ms": 0.0316,
+        "p95_ms": 0.0367,
+        "p99_ms": 0.0624,
+        "min_ms": 0.0308,
+        "max_ms": 0.2903,
+        "ops_per_sec": 30280.7
+      }
+    },
+    "http": {
+      "note": "in-process ASGI; excludes network and TLS",
+      "health": {
+        "n": 1000,
+        "mean_ms": 1.3228,
+        "p50_ms": 1.1426,
+        "p95_ms": 2.009,
+        "p99_ms": 2.9543,
+        "min_ms": 0.9857,
+        "max_ms": 44.6715,
+        "ops_per_sec": 756.0
+      },
+      "ready": {
+        "n": 500,
+        "mean_ms": 2.0386,
+        "p50_ms": 1.8811,
+        "p95_ms": 3.194,
+        "p99_ms": 3.8563,
+        "min_ms": 1.4742,
+        "max_ms": 8.1589,
+        "ops_per_sec": 490.5
+      },
+      "metrics": {
+        "n": 500,
+        "mean_ms": 1.7787,
+        "p50_ms": 1.6529,
+        "p95_ms": 2.6097,
+        "p99_ms": 3.3381,
+        "min_ms": 1.5218,
+        "max_ms": 3.9661,
+        "ops_per_sec": 562.2
+      },
+      "chat_unauthenticated_401": {
+        "n": 500,
+        "mean_ms": 1.5575,
+        "p50_ms": 1.4356,
+        "p95_ms": 2.2832,
+        "p99_ms": 2.7842,
+        "min_ms": 1.3417,
+        "max_ms": 3.0137,
+        "ops_per_sec": 642.0
+      }
+    },
+    "validation": {
+      "request_model_validation": {
+        "n": 20000,
+        "mean_ms": 0.0057,
+        "p50_ms": 0.0053,
+        "p95_ms": 0.0058,
+        "p99_ms": 0.0103,
+        "min_ms": 0.005,
+        "max_ms": 0.5459,
+        "ops_per_sec": 174949.2
+      }
+    }
+  }
+}
