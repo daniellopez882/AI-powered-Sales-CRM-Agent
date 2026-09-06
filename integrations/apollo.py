@@ -3,11 +3,11 @@ integrations/apollo.py
 Real Apollo.io API client for lead enrichment.
 Docs: https://apolloio.github.io/apollo-api-docs/
 """
-import httpx
-from typing import Optional
-from integrations.base import BaseLeadEnrichmentProvider
-from config.settings import settings
 
+import httpx
+
+from config.settings import settings
+from integrations.base import BaseLeadEnrichmentProvider
 
 APOLLO_BASE_URL = "https://api.apollo.io/v1"
 
@@ -37,7 +37,7 @@ class ApolloIntegration(BaseLeadEnrichmentProvider):
                     "email": email,
                     "reveal_personal_emails": False,
                     "reveal_phone_number": False,
-                }
+                },
             )
             response.raise_for_status()
             data = response.json()
@@ -78,7 +78,7 @@ class ApolloIntegration(BaseLeadEnrichmentProvider):
             response = client.get(
                 f"{APOLLO_BASE_URL}/organizations/enrich",
                 headers=self.headers,
-                params={"domain": domain}
+                params={"domain": domain},
             )
             response.raise_for_status()
             data = response.json()

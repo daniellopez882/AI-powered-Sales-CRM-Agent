@@ -1,5 +1,11 @@
 from mcp.server.fastmcp import FastMCP
-from integrations.mocks import ApolloIntegration, HubSpotIntegration, GmailIntegration, SlackIntegration
+
+from integrations.mocks import (
+    ApolloIntegration,
+    GmailIntegration,
+    HubSpotIntegration,
+    SlackIntegration,
+)
 
 # Initialize FastMCP server
 mcp = FastMCP("SalesIQ-CRM-Server")
@@ -8,6 +14,7 @@ apollo = ApolloIntegration()
 hubspot = HubSpotIntegration()
 gmail = GmailIntegration()
 slack = SlackIntegration()
+
 
 @mcp.tool()
 def enrich_lead(email: str) -> dict:
@@ -19,6 +26,7 @@ def enrich_lead(email: str) -> dict:
     """
     return apollo.enrich_contact(email)
 
+
 @mcp.tool()
 def draft_outreach(lead_email: str, product_desc: str) -> dict:
     """
@@ -27,9 +35,10 @@ def draft_outreach(lead_email: str, product_desc: str) -> dict:
     """
     # In a real tool, this would call the EmailPersonalizerAgent
     return {
-        "subject": f"Question about sales ops at TechCorp?",
-        "body": f"Hi, noticed you're using Salesforce and Marketo. We help with {product_desc}..."
+        "subject": "Question about sales ops at TechCorp?",
+        "body": f"Hi, noticed you're using Salesforce and Marketo. We help with {product_desc}...",
     }
+
 
 @mcp.tool()
 def analyze_pipeline() -> dict:
@@ -40,12 +49,14 @@ def analyze_pipeline() -> dict:
     deals = hubspot.get_deal_data()
     return {"deals_analyzed": len(deals), "deals": deals}
 
+
 @mcp.tool()
 def send_report(report_content: str, channel: str = "sales-alerts") -> dict:
     """
     Sends the generated pipeline report to Slack.
     """
     return slack.post_message(channel, report_content)
+
 
 if __name__ == "__main__":
     mcp.run()

@@ -3,24 +3,26 @@ agents/deal_analyzer.py
 DealAnalyzer — revenue science engine.
 Fetches real CRM data and performs Won/Lost DNA analysis + predictive scoring.
 """
-from crewai import Agent, Task, Crew, Process
-from langchain_openai import ChatOpenAI
-from agents.prompts import DEAL_ANALYZER_PROMPT
-from integrations import get_crm_provider
-from graph.state import CRMAgentState
-from config.settings import settings
-import logging
+
 import json
 
-logger = logging.getLogger(__name__)
+from crewai import Agent, Crew, Process, Task
+from langchain_openai import ChatOpenAI
+
+from config.settings import settings
+from graph.state import CRMAgentState
+from integrations import get_crm_provider
+from utils.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class DealAnalyzerAgent:
-    def __init__(self, model_name: str = None):
+    def __init__(self, model_name: str | None = None):
         model = model_name or settings.default_model
         self.llm = ChatOpenAI(
             model=model,
-            temperature=0,   # Deterministic analysis
+            temperature=0,  # Deterministic analysis
             openai_api_key=settings.openai_api_key,
         )
         self.crm_provider = get_crm_provider()
@@ -40,7 +42,9 @@ class DealAnalyzerAgent:
     def get_task(self, deal_data: list) -> Task:
         won = [d for d in deal_data if "won" in d.get("stage", "").lower()]
         lost = [d for d in deal_data if "lost" in d.get("stage", "").lower()]
-        active = [d for d in deal_data if d.get("stage", "").lower() not in ("closed won", "closed lost")]
+        active = [
+            d for d in deal_data if d.get("stage", "").lower() not in ("closed won", "closed lost")
+        ]
 
         return Task(
             description=f"""
@@ -96,7 +100,7 @@ Return ONLY a valid JSON matching the defined OUTPUT FORMAT.
             ),
         )
 
-    def run(self, deal_data: list = None) -> dict:
+    def run(self, deal_data: list | None = None) -> dict:
         """
         1. Fetch real deals from HubSpot (or mock).
         2. Run LLM analysis on the full dataset.
@@ -127,6 +131,7 @@ Return ONLY a valid JSON matching the defined OUTPUT FORMAT.
 
 # ── LangGraph node function ───────────────────────────────────────────────────
 
+
 def deal_analyzer_node(state: CRMAgentState, agent: DealAnalyzerAgent) -> dict:
     """Named LangGraph node for DealAnalyzer with error handling."""
     try:
@@ -136,11 +141,11 @@ def deal_analyzer_node(state: CRMAgentState, agent: DealAnalyzerAgent) -> dict:
         return {
             "deal_analysis": result,
             "next_agent": "pipeline_reporter",
-            "data_sources": state.get("data_sources", []) + ["deal_analyzer", "hubspot"],
+            "data_sources": [*state.get("data_sources", []), "deal_analyzer", "hubspot"],
         }
     except Exception as e:
         logger.error(f"DealAnalyzer node failed: {e}", exc_info=True)
         return {
-            "errors": state.get("errors", []) + [f"DealAnalyzer failed: {str(e)}"],
+            "errors": [*state.get("errors", []), f"DealAnalyzer failed: {e!s}"],
             "requires_human": True,
         }

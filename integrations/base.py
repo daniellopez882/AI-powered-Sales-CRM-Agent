@@ -3,8 +3,8 @@ integrations/base.py
 Abstract base classes for all external integrations.
 Enforces a consistent contract between mock and real implementations.
 """
+
 from abc import ABC, abstractmethod
-from typing import Optional
 
 
 class BaseLeadEnrichmentProvider(ABC):
@@ -43,15 +43,13 @@ class BaseCRMProvider(ABC):
 
 class BaseEmailProvider(ABC):
     @abstractmethod
-    def send_email(self, to: str, subject: str, body: str,
-                   html_body: Optional[str] = None) -> dict:
+    def send_email(self, to: str, subject: str, body: str, html_body: str | None = None) -> dict:
         """Send a single email. Returns send result with message_id."""
         ...
 
 
 class BaseMessagingProvider(ABC):
     @abstractmethod
-    def post_message(self, channel: str, text: str,
-                     blocks: Optional[list] = None) -> dict:
+    def post_message(self, channel: str, text: str, blocks: list | None = None) -> dict:
         """Post a message to a channel. Returns Slack API response."""
         ...

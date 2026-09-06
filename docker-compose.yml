@@ -1,30 +1,70 @@
-version: '3.8'
+# Local development stack.
+#
+# Changes from the previous revision:
+#   * `depends_on` waits for Redis to be *healthy*, not merely created, so the
+#     API no longer races the cache on a cold start
+#   * both services declare healthchecks
+#   * the obsolete top-level `version:` key is gone
+#   * `restart: unless-stopped` instead of `always`, so a deliberate stop
+#     during development stays stopped
+#   * resource limits, so a runaway agent loop cannot starve the host
 
 services:
   api:
-    build: .
+    build:
+      context: .
+      target: runtime
+    image: salesiq-api:local
     container_name: salesiq-api
     ports:
       - "8000:8000"
     env_file:
       - .env
     environment:
-      - REDIS_URL=redis://redis:6379/0
-      - DATABASE_URL=sqlite:////app/data/salesiq.db
+      REDIS_URL: redis://redis:6379/0
+      DATABASE_URL: sqlite:////app/data/salesiq.db
+      CHECKPOINT_DB_PATH: /app/data/checkpoints.sqlite
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
     volumes:
-      - ./data:/app/data
+      - api_data:/app/data
     depends_on:
-      - redis
-    restart: always
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
 
   redis:
     image: redis:7-alpine
     container_name: salesiq-redis
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"   # loopback only; not exposed to the network
     volumes:
       - redis_data:/data
-    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 320M
 
 volumes:
   redis_data:
+  api_data:
